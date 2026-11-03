@@ -1,0 +1,5 @@
+.idea/
+myproject/venv/
+__pycache__/
+env/
+*.sqlite*

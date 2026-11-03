@@ -7,9 +7,9 @@ from . import views
 #     path('item/<int:item_id>/', views.show_item, name='show_item'),
 # ]
 
-app_name = 'students'
+app_name = 'catalog'
 
 urlpatterns = [
-     path('about/', views.about, name='about'),
-     path('contact/', views.contact, name='contact'),
+     path('', views.home, name='home'),
+     path('contacts/', views.contact, name='contact'),
 ]
