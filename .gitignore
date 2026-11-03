@@ -1,5 +1,6 @@
 .idea/
-myproject/venv/
+venv/
 __pycache__/
 env/
 *.sqlite*
+.env
