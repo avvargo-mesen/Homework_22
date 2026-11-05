@@ -44,12 +44,12 @@ def index(request):
     return render(request, 'catalog/index.html', context=context)
 
 
-def category_detail(request, category_id):
-    category = Category.objects.get(id=1)
+def product_detail(request, pk):
+    product = Product.objects.get(id=pk)
     context ={
-        'category': category,
+        'product': product
 }
-    return render(request, 'catalog/category_detail.html', context=context)
+    return render(request, 'catalog/product_detail.html', context=context)
 
 def product_list(request):
     product = Product.objects.all()

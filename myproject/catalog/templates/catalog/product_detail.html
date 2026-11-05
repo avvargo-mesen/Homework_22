@@ -1,13 +1,21 @@
 {% extends 'catalog/base.html' %}
 
-{% block title %}Список категорий{% endblock %}
+{% block title %}Список продуктов{% endblock %}
 
 {% block content %}
-{% include 'catalog/header.html'%}
-<h2>Список категорий</h2>
-    <h1 class="mb-4">Информация о категории</h1>
-    <p>Имя:{{ category.name|upper}}</p>
-    <p>Описание:{{ category.description|truncatechars:100}}</p>
+    <h1 class="mb-4">Информация о продукте</h1>
+    <p>Имя:{{ product.name|upper}}</p>
+    <p>Описание:{{ product.description|truncatechars:100}}</p>
+    {% if product.image %}
+    <img src="{{ product.image.url }}" alt="{{ product.name }}" width="300">
+    {% else %}
+    <p>Изображение отсутствует</p>
+    {% endif %}
+    <p>Категория:{{ product.category}}</p>
+    <p>Цена:{{ product.price}}</p>
+    <p>Дата создания:{{ product.created_at}}</p>
+    <p>Дата обновления:{{ product.updated_at}}</p>
+    <a href="{% url 'catalog:product_list'%}">Назад к списку</a>
 {% endblock %}
 
 
