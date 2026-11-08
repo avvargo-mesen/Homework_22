@@ -4,7 +4,7 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, TemplateView
 
-from catalog.models import Category, Product, MyModel
+from catalog.models import Category, Product
 
 # Create your views here.
 
@@ -101,16 +101,32 @@ class ContactView(TemplateView):
 #         return HttpResponse(f"Спасибо, {name}! Сообщение получено.")
 #     return render(request, 'catalog/contacts.html') # чтобы не упало в ошибку - возвращается рендер шаблона.
 
-def example_view(request):
-    return render(request, 'catalog/example.html')
 
-def index(request):
-    category = Category.objects.get(id=1)
-    context ={
-        'category_name': category.name,
-        'category_description': category.description,
-    }
-    return render(request, 'catalog/index.html', context=context)
+class ExampleView(TemplateView):
+    template_name = 'catalog/example.html'
+
+# def example_view(request):
+#     return render(request, 'catalog/example.html')
+
+class IndexView(DetailView):
+    model = Category
+    template_name = 'catalog/index.html'
+    context_object_name = 'category'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['name'] = self.object.name
+        context['description'] = self.object.description
+
+        return context
+
+# def index(request):
+#     category = Category.objects.get(id=1)
+#     context ={
+#         'category_name': category.name,
+#         'category_description': category.description,
+#     }
+#     return render(request, 'catalog/index.html', context=context)
 
 class ProductDetailView(DetailView):
     model = Product
