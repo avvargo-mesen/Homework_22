@@ -16,6 +16,9 @@ urlpatterns = [
      path('index/<int:pk>/', views.IndexView.as_view(), name='index'),
      path('products/<int:pk>/', views.ProductDetailView.as_view(), name='product_detail'),
      path('product_list/', views.ProductListView.as_view(), name='product_list'),
+     path('product_create/', views.ProductCreateView.as_view(), name='product_create'),
+     path('product_create/<int:pk>/', views.ProductUpdateView.as_view(), name='product_update'),
+     path('product_delete/<int:pk>/', views.ProductDeleteView.as_view(), name='product_delete'),
 
      # path('mymodel/list/', views.MyModelListView.as_view(), name='mymodel_list'),
      # path('mymodel/detail/<int:pk>/', views.MyModelDetailView.as_view(), name='mymodel_detail'),
