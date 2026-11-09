@@ -25,7 +25,7 @@ class BlogDetailView(DetailView):
     def get_object(self):
         obj = super().get_object()
         obj.views_count +=1
-        obj.save()
+        obj.save(update_fields=['views_count'])
 
         return obj
 
