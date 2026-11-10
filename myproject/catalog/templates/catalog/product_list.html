@@ -14,7 +14,9 @@
         {% else %}
         <p>Изображение отсутствует</p>
         {% endif %}
-    </li>
+            <a href="{% url 'catalog:product_update' product.pk %}" class="btn btn-secondary">Редактировать</a>
+            <a href="{% url 'catalog:product_delete' product.pk %}" class="btn btn-danger">Удалить</a>
+          </li>
     {% endfor %}
 </ul>
 {% endblock %}
