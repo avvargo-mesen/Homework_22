@@ -24,6 +24,7 @@ urlpatterns = [
     # path('catalog/', include('catalog.urls')),
     path('catalog/', include('catalog.urls', namespace='catalog')),
     path('blogs/', include('blog.urls', namespace='blog')),
+    path('users/', include('users.urls', namespace='users'))
 
 ]
 
