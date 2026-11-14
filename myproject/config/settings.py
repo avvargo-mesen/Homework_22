@@ -142,3 +142,22 @@ MAILERS = {
 }
 
 AUTH_USER_MODEL = 'users.User'
+
+MAILERS = {
+    "default": {
+        "BACKEND": 'django.core.mail.backends.smtp.EmailBackend',
+        "OPTIONS": {
+            "host": 'smtp.yandex.ru',
+            "port": 465,
+            "use_ssl": True,
+            "use_tls": False,
+            "username": os.getenv('EMAIL_HOST_USER'),
+            "password": os.getenv('EMAIL_HOST_PASSWORD'),},},}
+
+
+
+DEFAULT_FROM_EMAIL = os.getenv("EMAIL_HOST_USER")
+
+LOGIN_REDIRECT_URL = 'catalog:home'
+LOGOUT_REDIRECT_URL = 'catalog:home'
+LOGIN_URL = 'users:login'
