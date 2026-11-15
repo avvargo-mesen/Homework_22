@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseForbidden
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, TemplateView
@@ -161,6 +161,9 @@ class ProductCreateView(LoginRequiredMixin, CreateView):
     template_name = 'catalog/forms.html'
     success_url = reverse_lazy('catalog:product_list')
 
+    def form_valid(self, form):
+        form.instance.owner = self.request.user
+        return super().form_valid(form)
 
 class ProductUpdateView(LoginRequiredMixin, UpdateView):
     model = Product
@@ -168,8 +171,21 @@ class ProductUpdateView(LoginRequiredMixin, UpdateView):
     template_name = 'catalog/forms.html'
     success_url = reverse_lazy('catalog:product_list')
 
+    def get_object(self, queryset=None):
+        obj = super().get_object()
+        if self.request.user != obj.owner:
+            return HttpResponseForbidden("Вы не владелец этого товара")
+        return obj
+
+
 
 class ProductDeleteView(LoginRequiredMixin, DeleteView):
     model = Product
     template_name = 'catalog/product_confirm_delete.html'
     success_url = reverse_lazy('catalog:product_list')
+
+    def get_object(self, queryset=None):
+        obj = super().get_object()
+        if self.request.user != obj.owner and not self.request.user.has_perm('catalog.can_unpublish_product'):
+            return HttpResponseForbidden("Вы не владелец этого товара")
+        return obj
