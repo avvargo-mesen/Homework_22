@@ -173,7 +173,7 @@ class ProductUpdateView(LoginRequiredMixin, UpdateView):
 
     def get_object(self, queryset=None):
         obj = super().get_object()
-        if self.request.user != obj.owner:
+        if self.request.user != obj.owner and not self.request.user.has_perm('catalog.can_unpublish_product'):
             return HttpResponseForbidden("Вы не владелец этого товара")
         return obj
 
