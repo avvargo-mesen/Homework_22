@@ -4,9 +4,24 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.decorators.cache import cache_page
+from django.utils.decorators import method_decorator
 
 from catalog.models import Category, Product
 from catalog.forms import ProductForm
+from catalog.services import get_products_by_category
+
+from django.core.cache import cache
+
+# def my_view(request):
+#     """Кеширование"""
+#     data = cache.get('my_key')
+#
+#     if not data:
+#         data = "some"
+#         cache.set('my_key', data, 60 * 50)
+#
+#     return HttpResponse(data)
 
 # Create your views here.
 
@@ -129,7 +144,7 @@ class IndexView(DetailView):
 #         'category_description': category.description,
 #     }
 #     return render(request, 'catalog/index.html', context=context)
-
+@method_decorator(cache_page(60 * 15), name='dispatch')
 class ProductDetailView(LoginRequiredMixin, DetailView):
     model = Product
     template_name = 'catalog/product_detail.html'
@@ -142,10 +157,20 @@ class ProductDetailView(LoginRequiredMixin, DetailView):
 # }
 #     return render(request, 'catalog/product_detail.html', context=context)
 
+
 class ProductListView(ListView):
     model = Product
     template_name = 'catalog/product_list.html'
     context_object_name = 'products'
+
+    def get_queryset(self):
+        products = cache.get('products_list')
+
+        if not products:
+            products = list(Product.objects.all())
+            cache.set('products_list', products, 60 * 50)
+
+        return products
 
 # def product_list(request):
 #     product = Product.objects.all()
@@ -153,6 +178,15 @@ class ProductListView(ListView):
 #         "products" : product,
 #     }
 #     return render(request, 'catalog/product_list.html', context=context)
+
+class CategoryProductListView(ListView):
+    model = Product
+    template_name = 'catalog/category_products.html'
+    context_object_name = 'products'
+
+    def get_queryset(self):
+        category_id = self.kwargs.get('pk')
+        return get_products_by_category(category_id)
 
 
 class ProductCreateView(LoginRequiredMixin, CreateView):
@@ -176,8 +210,6 @@ class ProductUpdateView(LoginRequiredMixin, UpdateView):
         if self.request.user != obj.owner and not self.request.user.has_perm('catalog.can_unpublish_product'):
             return HttpResponseForbidden("Вы не владелец этого товара")
         return obj
-
-
 
 class ProductDeleteView(LoginRequiredMixin, DeleteView):
     model = Product
