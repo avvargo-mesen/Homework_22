@@ -167,7 +167,7 @@ class ProductListView(ListView):
         products = cache.get('products_list')
 
         if not products:
-            products = Product.objects.all()
+            products = list(Product.objects.all())
             cache.set('products_list', products, 60 * 50)
 
         return products
