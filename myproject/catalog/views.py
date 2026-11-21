@@ -4,9 +4,23 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.decorators.cache import cache_page
+from django.utils.decorators import decorator
 
 from catalog.models import Category, Product
 from catalog.forms import ProductForm
+
+from django.core.cache import cache
+
+def my_view(request):
+    """Кеширование"""
+    data = cache.get('my_key')
+
+    if not data:
+        data = "some"
+        cache.set('my_key', data, 60 * 50)
+
+    return HttpResponse(data)
 
 # Create your views here.
 
@@ -129,7 +143,7 @@ class IndexView(DetailView):
 #         'category_description': category.description,
 #     }
 #     return render(request, 'catalog/index.html', context=context)
-
+@method_decorator(cache_page(60 * 15), name='dispatch')
 class ProductDetailView(LoginRequiredMixin, DetailView):
     model = Product
     template_name = 'catalog/product_detail.html'
@@ -142,6 +156,7 @@ class ProductDetailView(LoginRequiredMixin, DetailView):
 # }
 #     return render(request, 'catalog/product_detail.html', context=context)
 
+@method_decorator(cache_page(60 * 15), name='dispatch')
 class ProductListView(ListView):
     model = Product
     template_name = 'catalog/product_list.html'
@@ -176,8 +191,6 @@ class ProductUpdateView(LoginRequiredMixin, UpdateView):
         if self.request.user != obj.owner and not self.request.user.has_perm('catalog.can_unpublish_product'):
             return HttpResponseForbidden("Вы не владелец этого товара")
         return obj
-
-
 
 class ProductDeleteView(LoginRequiredMixin, DeleteView):
     model = Product
